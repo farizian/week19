@@ -45,7 +45,7 @@ describe('test endpoint category', async () => {
   it('test update /category', () => {
     getToken.admin().then((token) => {
       request(app)
-        .put('/category/42')
+        .put('/category/51')
         .set('token', token)
         .send({
           // eslint-disable-next-line quote-props
@@ -65,7 +65,7 @@ describe('test endpoint category', async () => {
   it('test delete /category', () => {
     getToken.admin().then((token) => {
       request(app)
-        .delete('/category/42')
+        .delete('/category/52')
         .set('token', token)
         .expect('Content-Type', /json/)
         .expect(200)

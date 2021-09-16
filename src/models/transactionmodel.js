@@ -38,15 +38,6 @@ const prdmodel = {
       }
     });
   }),
-  getidMaster: (id) => new Promise((resolve, reject) => {
-    db.query(`select id from transaction where user_id='${id}'`, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  }),
   getdetail: (id) => new Promise((resolve, reject) => {
     db.query(`select t.id, t.transaction_id, p.prdname, t.price, t.qty from transaction_details t left join product p on t.product_id=p.id where transaction_id='${id}'`, (err, result) => {
       if (err) {

@@ -121,7 +121,7 @@ describe('test endpoint transaction', async () => {
   it('test delete /transaction', () => {
     getToken.admin().then((token) => {
       request(app)
-        .delete('/transaction/75')
+        .delete('/transaction/89')
         .set('token', token)
         .expect('Content-Type', /json/)
         .expect(200)

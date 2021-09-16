@@ -26,7 +26,7 @@ describe('test endpoint product', async () => {
   it('test get /productDetails', () => {
     getToken.user().then((token) => {
       request(app)
-        .get('/product/3')
+        .get('/product/5')
         .set('token', token)
         .expect('Content-Type', /json/)
         .expect(200)
@@ -104,7 +104,7 @@ describe('test endpoint product', async () => {
       } else {
         getToken.admin().then((token) => {
           request(app)
-            .put('/product/73')
+            .put('/product/80')
             .set('token', token)
             .field('disc', '11%')
             .field('prdname', 'seblak')
@@ -155,7 +155,7 @@ describe('test endpoint product', async () => {
   it('test delete /product success', () => {
     getToken.admin().then((token) => {
       request(app)
-        .delete('/product/71')
+        .delete('/product/77')
         .set('token', token)
         .expect('Content-Type', /json/)
         .expect(200)

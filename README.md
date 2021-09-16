@@ -17,22 +17,22 @@
 # RestfullAPI-ExpressJS-MySQL-CoffeeShop
 
 // menampilkan data
-.get http://localhost:3000/product
+.get http://localhost:4000/product
 
 // insert data
-.push http://localhost:3000/product
+.push http://localhost:4000/product
 
 // delete data
-.delete http://localhost:3000/product/id
+.delete http://localhost:4000/product/id
 
 // update data
-.put http://localhost:3000/product/id
+.put http://localhost:4000/product/id
 
 //search name
-.get http://localhost:3000/product?searcrh=
+.get http://localhost:4000/product?searcrh=
 
 // get page by limit
-.get http://localhost:3000/product?limit=10&page=2
+.get http://localhost:4000/product?limit=10&page=2
 
 //sort
-.get http://localhost:3000/product?field=id&sort=asc
+.get http://localhost:4000/product?field=id&sort=asc

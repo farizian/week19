@@ -194,7 +194,7 @@ describe('test endpoint user', async () => {
       } else {
         getToken.user().then((token) => {
           request(app)
-            .put('/user/323')
+            .put('/user/337')
             .set('token', token)
             .field('first_name', 'Nobara')
             .field('last_name', 'Rifai')
@@ -250,7 +250,7 @@ describe('test endpoint user', async () => {
   it('test delete /user success', () => {
     getToken.user().then((token) => {
       request(app)
-        .delete('/user/320')
+        .delete('/user/335')
         .set('token', token)
         .expect('Content-Type', /json/)
         .expect(200)

@@ -15,9 +15,9 @@ app.use(catrouter);
 app.use(transrouter);
 app.use(express.static(`${__dirname}./src/img`));
 
-app.listen(3000, () => {
+app.listen(4000, () => {
   // eslint-disable-next-line no-console
-  console.log('Service berjalan di port 3000');
+  console.log('Service berjalan di port 4000');
 });
 
 module.exports = app;
