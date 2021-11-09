@@ -33,7 +33,7 @@ const standartResponse = {
         success: false,
         data: null,
         code,
-        err,
+        error: err,
         message: 'Bad Request',
       };
       res.status(400).json(response);
@@ -61,6 +61,15 @@ const standartResponse = {
         code,
         error: err,
         message: 'Data Not Found',
+      };
+      res.status(411).json(response);
+    } else if (code === 411) {
+      const response = {
+        success: false,
+        data: null,
+        code,
+        error: err,
+        message: 'Data Required',
       };
       res.status(404).json(response);
     } else if (code === 408) {

@@ -43,7 +43,7 @@ const userctrl = {
     try {
       const id = req.userId; // url parameter untuk mengambil id
       models.getdetail(id).then((result) => {
-        success(res, result, 'get user data success');
+        success(res, result, 'get user details success');
       })
         .catch((err) => {
           failed(res, 500, err);
@@ -64,7 +64,7 @@ const userctrl = {
       const { email } = body;
       const { address } = body;
       const phone = body.phone_number;
-      const img = req.file.filename;
+      const img = req.file ? req.file.filename : 'default.png';
       const { status } = body;
       const pw = bcrypt.hashSync(body.password, 10);
       models.insert(img, first, last, birth, gender, username, email, pw, address, phone, status)
@@ -101,6 +101,7 @@ const userctrl = {
         }
       }).catch((err) => {
         failed(res, 404, err);
+        console.log(err);
       });
     } catch (err) {
       failed(res, 500, err);
@@ -159,6 +160,70 @@ const userctrl = {
       failed(res, 404, err);
     }
   },
+  delImg: async (req, res) => {
+    try {
+      const id = req.userId;
+      const imgName = await models.getimg(id);
+      const imgPath = `./src/img/${imgName[0].img}`;
+      if (imgName[0].img === 'default.png') {
+        models.delImg(id).then((result) => {
+          success(res, result, 'Delete User Image Success');
+        })
+          .catch((err) => {
+            failed(res, 404, err);
+          });
+      } else {
+        fs.unlink(imgPath, ((errImg) => {
+          if (errImg) {
+            models.delImg(id).then((result) => {
+              success(res, result, 'Delete User Image Success');
+            })
+              .catch((err) => {
+                failed(res, 404, err);
+              });
+          } else {
+            models.delImg(id).then((result) => {
+              success(res, result, 'Delete User Image Success');
+            })
+              .catch((err) => {
+                failed(res, 404, err);
+              });
+          }
+        }));
+      }
+    } catch (err) {
+      failed(res, 404, err);
+    }
+  },
+  updatePw: async (req, res) => {
+    try {
+      const {
+        oldpassword,
+        password,
+      } = req.body;
+      const id = req.userId;
+      const detail = await models.getdetail(id);
+      const pwHash = detail[0].password;
+      bcrypt.compare(oldpassword, pwHash, (error, checkpw) => {
+        if (error) {
+          res.json(error);
+        } else if (checkpw === true) {
+          const pw = bcrypt.hashSync(password, 10);
+          models.updatePw(id, pw)
+            .then((result) => {
+              success(res, result, 'Update Password Success');
+            })
+            .catch((err) => {
+              failed(res, 400, err);
+            });
+        } else {
+          failed(res.status(404), 404, 'Wrong Password');
+        }
+      });
+    } catch (error) {
+      failed(res, 500, error);
+    }
+  },
   update: async (req, res) => {
     try {
       const { body } = req;
@@ -170,31 +235,40 @@ const userctrl = {
       const { username } = body;
       const { email } = body;
       const { address } = body;
-      const img = req.file.filename;
-      const { status } = body;
-      const phone = body.phone_number;
-      const pw = bcrypt.hashSync(body.password, 10);
       const imgName = await models.getimg(id);
       const imgPath = `./src/img/${imgName[0].img}`;
-      fs.unlink(imgPath, ((errImg) => {
-        if (errImg) {
-          models.update(id, img, first, last, birth, gender, username, email, pw, address, phone, status)
-            .then((result) => {
-              success(res, result, 'Update User Data Success');
-            })
-            .catch((err) => {
-              failed(res, 400, err);
-            });
-        } else {
-          models.update(id, img, first, last, birth, gender, username, email, pw, address, phone, status)
-            .then((result) => {
-              success(res, result, 'Update User Data Success');
-            })
-            .catch((err) => {
-              failed(res, 400, err);
-            });
-        }
-      }));
+      const img = !req.file ? imgName[0].img : req.file.filename;
+      const { status } = body;
+      const phone = body.phone_number;
+      if (!req.file || imgName[0].img === 'default.png') {
+        models.update(id, img, first, last, birth, gender, username, email, address, phone, status)
+          .then((result) => {
+            success(res, result, 'Update User Data Success');
+          })
+          .catch((err) => {
+            failed(res, 400, err);
+          });
+      } else {
+        fs.unlink(imgPath, ((errImg) => {
+          if (errImg) {
+            models.update(id, img, first, last, birth, gender, username, email, address, phone, status)
+              .then((result) => {
+                success(res, result, 'Update User Data Success');
+              })
+              .catch((err) => {
+                failed(res, 400, err);
+              });
+          } else {
+            models.update(id, img, first, last, birth, gender, username, email, address, phone, status)
+              .then((result) => {
+                success(res, result, 'Update User Data Success');
+              })
+              .catch((err) => {
+                failed(res, 400, err);
+              });
+          }
+        }));
+      }
     } catch (err) {
       failed(res, 500, err);
     }

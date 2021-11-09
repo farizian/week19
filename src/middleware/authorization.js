@@ -10,7 +10,7 @@ const authorization = {
         if (result[0].status === 0) {
           next();
         } else {
-          failed(res, 401, 'Anda tidak diizinkan, silahkan hubungi admin.');
+          failed(res, 401, 'Anda tidak diizinkan mengakses fitur ini, silahkan hubungi admin.');
         }
       })
         .catch((err) => {

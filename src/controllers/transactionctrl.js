@@ -18,7 +18,7 @@ const transactionctrl = {
   getlist: (req, res) => {
     try {
       const { query } = req;
-      const search = query.search === undefined ? '' : query.search;
+      const search = query.search === null || query.search === undefined ? '' : query.search;
       const field = query.field === undefined ? 'username' : query.field;
       const sort = query.sort === undefined ? 'asc' : query.sort;
       const limit = query.limit === undefined ? 50 : parseInt(query.limit, 10);
@@ -46,8 +46,9 @@ const transactionctrl = {
             });
         } else {
           const response = JSON.parse(resultRedis);
-          const dataFilter = _.filter(response, (e) => e.username.includes(search));
-          const paginated = _.slice(dataFilter, offset, offset + limit);
+          // const dataFilter = _.filter(response, (e) => e.username.includes(search));
+          // console.log(response);
+          const paginated = _.slice(response, offset, offset + limit);
           const sortBy = _.sortBy(paginated, field);
           const output = {
             data: sortBy,
@@ -67,8 +68,22 @@ const transactionctrl = {
   getdetailMaster: (req, res) => {
     try {
       const id = req.userId; // url parameter untuk mengambil id
-      models.getdetailMaster(id).then((result) => {
-        success(res, result, 'Get transaction Data Success');
+      models.getdetailMaster(id).then((transaction) => {
+        // eslint-disable-next-line array-callback-return
+        // transaction.map((e) => {
+        //   const detailTr = models.getdetail(e.id);
+        //   Promise.all(detailTr).then((result) => {
+        //     const hasil = {
+        //       transaction,
+        //       result,
+        //     };
+        //     success(res, hasil, 'Input To transaction Data Success');
+        //   }).catch((err) => {
+        //     console.log(err);
+        //   });
+        //   // success(res, hasil, 'Get transaction Data Success');
+        // });
+        success(res, transaction, 'Get transaction Data Success');
       })
         .catch((err) => {
           failed(res, 500, err);
@@ -103,11 +118,12 @@ const transactionctrl = {
         });
         Promise.all(dataDetails).then(() => {
           success(res, result, 'Input To transaction Data Success');
+        }).catch((err) => {
+          console.log(err);
         });
-      })
-        .catch((err) => {
-          failed(res, 400, err);
-        });
+      }).catch((err) => {
+        failed(res, 400, err);
+      });
     } catch (err) {
       failed(res, 401, err);
     }

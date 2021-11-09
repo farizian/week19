@@ -30,7 +30,7 @@ const prdmodel = {
     });
   }),
   getdetailMaster: (id) => new Promise((resolve, reject) => {
-    db.query(`select t.id, u.username, t.address, t.payment, t.subtotal, t.tax, t.shipping, t.total from transaction t left join user u on t.user_id=u.id where user_id='${id}'`, (err, result) => {
+    db.query(`select t.id, u.username, t.address, t.payment, t.subtotal, t.tax, t.shipping, t.total, t.status from transaction t left join user u on t.user_id=u.id where user_id='${id}'`, (err, result) => {
       if (err) {
         reject(err);
       } else {
@@ -39,7 +39,7 @@ const prdmodel = {
     });
   }),
   getdetail: (id) => new Promise((resolve, reject) => {
-    db.query(`select t.id, t.transaction_id, p.prdname, t.price, t.qty from transaction_details t left join product p on t.product_id=p.id where transaction_id='${id}'`, (err, result) => {
+    db.query(`select t.id, t.transaction_id, p.prdname, p.img, t.price, t.qty from transaction_details t left join product p on t.product_id=p.id where transaction_id='${id}'`, (err, result) => {
       if (err) {
         reject(err);
       } else {
@@ -48,7 +48,7 @@ const prdmodel = {
     });
   }),
   insertMaster: (master) => new Promise((resolve, reject) => {
-    db.query(`insert into transaction (user_id, address, payment, subtotal, tax, shipping, total) value ('${master.user_id}', '${master.address}', '${master.payment}', '${master.subtotal}', '${master.tax}', '${master.shipping}', '${master.total}')`, (err, result) => {
+    db.query(`insert into transaction (user_id, address, payment, subtotal, tax, shipping, total, status) value ('${master.user_id}', '${master.address}', '${master.payment}', '${master.subtotal}', '${master.tax}', '${master.shipping}', '${master.total}', '${master.status}')`, (err, result) => {
       if (err) {
         reject(err);
       } else {

@@ -89,8 +89,26 @@ const usermodel = {
       }
     });
   }),
-  update: (id, img, first, last, birth, gender, username, email, password, address, phone, status) => new Promise((resolve, reject) => {
-    db.query(`update user set img="${img}", first_name="${first}", last_name="${last}", birth_date="${birth}", gender="${gender}", username="${username}", email="${email}", password="${password}", address="${address}", phone_number="${phone}", status="${status}" where id="${id}"`, (err, result) => {
+  delImg: (id) => new Promise((resolve, reject) => {
+    db.query(`update user set img="default.png" where id="${id}"`, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  }),
+  updatePw: (id, password) => new Promise((resolve, reject) => {
+    db.query(`update user set password="${password}" where id="${id}"`, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  }),
+  update: (id, img, first, last, birth, gender, username, email, address, phone, status) => new Promise((resolve, reject) => {
+    db.query(`update user set img="${img}", first_name="${first}", last_name="${last}", birth_date="${birth}", gender="${gender}", username="${username}", email="${email}", address="${address}", phone_number="${phone}", status="${status}" where id="${id}"`, (err, result) => {
       if (err) {
         reject(err);
       } else {

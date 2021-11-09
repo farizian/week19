@@ -2,20 +2,19 @@
 
 const express = require('express');
 const userctrl = require('../controllers/userctrl');
-// const midAuth = require('../middleware/auth');
+const midAuth = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
 const userrouter = express.Router();
 userrouter
   .get('/user', userctrl.getlist)
-  // .get('/userdetails', midAuth, userctrl.getdetail)
-  .get('/userdetails', userctrl.getdetail)
+  .get('/userdetails', midAuth, userctrl.getdetail)
   .post('/user', upload, userctrl.insert)
   .post('/login', userctrl.login)
   .post('/register', userctrl.register)
-  // .delete('/user/:id', midAuth, userctrl.del)
-  .delete('/user/:id', userctrl.del)
-  // .put('/user/:id', midAuth, upload, userctrl.update);
-  .put('/user/:id', upload, userctrl.update);
+  .delete('/user/:id', midAuth, userctrl.del)
+  .put('/delimg', midAuth, userctrl.delImg)
+  .put('/pw', midAuth, userctrl.updatePw)
+  .put('/user/:id', midAuth, upload, userctrl.update);
 
 module.exports = userrouter;

@@ -7,7 +7,7 @@ const midAuth = (req, res, next) => {
   const { token } = headers;
   jwt.verify(token, env.pwtoken, (err, decoded) => {
     if (err) {
-      failed(res, 400, 'Token salah');
+      failed(res, 500, 'Token salah');
     } else {
       req.userId = decoded.id;
       next();

@@ -47,7 +47,9 @@ const productctrl = {
             });
         } else {
           const response = JSON.parse(resultRedis);
-          const dataFilter = _.filter(response, (e) => e.prdname.includes(search));
+          const dataFilter = _.filter(
+            response, (e) => e.prdname.toLowerCase().includes(search.toLowerCase()),
+          );
           const paginated = _.slice(dataFilter, offset, offset + limit);
           const sortBy = _.sortBy(paginated, field);
           const output = {
@@ -81,7 +83,7 @@ const productctrl = {
   insert: (req, res) => {
     try {
       const { body } = req;
-      const img = req.file.filename;
+      const img = !req.file ? '' : req.file.filename;
       models.insert(body, img).then((result) => {
         client.del('product');
         success(res, result, 'Input To Product Data Success');
@@ -102,6 +104,7 @@ const productctrl = {
       fs.unlink(imgPath, ((errImg) => {
         if (errImg) {
           models.del(id).then((result) => {
+            client.del('product');
             success(res, result, 'Delete Product Success');
           })
             .catch((err) => {
@@ -109,6 +112,7 @@ const productctrl = {
             });
         } else {
           models.del(id).then((result) => {
+            client.del('product');
             success(res, result, 'Delete Product With Img Success');
           })
             .catch((err) => {
@@ -123,30 +127,34 @@ const productctrl = {
   // update data produk
   update: async (req, res) => {
     try {
-      const { body } = req;
-      const { id } = req.params;
-      const img = req.file.filename;
-      const imgName = await models.getimg(id);
-      const imgPath = `./src/img/${imgName[0].img}`;
-      fs.unlink(imgPath, ((errImg) => {
-        if (errImg) {
-          models.update(img, body, id).then((result) => {
-            client.del('product');
-            success(res, result, 'Update Product Data Success');
-          })
-            .catch((err) => {
-              failed(res, 404, err);
-            });
-        } else {
-          models.update(img, body, id).then((result) => {
-            client.del('product');
-            success(res, result, 'Update Product Data Success');
-          })
-            .catch((err) => {
-              failed(res, 404, err);
-            });
-        }
-      }));
+      if (req.file === '' || !req.file) {
+        failed(res, 411, 'Field Tidak Boleh Kosong');
+      } else {
+        const { body } = req;
+        const { id } = req.params;
+        const img = req.file.filename;
+        const imgName = await models.getimg(id);
+        const imgPath = `./src/img/${imgName[0].img}`;
+        fs.unlink(imgPath, ((errImg) => {
+          if (errImg) {
+            models.update(img, body, id).then((result) => {
+              client.del('product');
+              success(res, result, 'Update Product Data Success');
+            })
+              .catch((err) => {
+                failed(res, 404, err);
+              });
+          } else {
+            models.update(img, body, id).then((result) => {
+              client.del('product');
+              success(res, result, 'Update Product Data Success');
+            })
+              .catch((err) => {
+                failed(res, 404, err);
+              });
+          }
+        }));
+      }
     } catch (err) {
       failed(res, 500, err);
     }
