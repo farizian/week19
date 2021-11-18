@@ -3,7 +3,8 @@ const _ = require('lodash');
 const redis = require('redis');
 
 const client = redis.createClient({
-  url: 'redis-11498.c278.us-east-1-4.ec2.cloud.redislabs.com:11498',
+  host: 'redis-11498.c278.us-east-1-4.ec2.cloud.redislabs.com',
+  port: 11498,
   password: '1234',
 });
 client.on('error', (err) => {
