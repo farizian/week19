@@ -7,7 +7,7 @@ const env = {
   token: process.env.token,
   database: process.env.database,
   pwtoken: process.env.pwtoken,
-  port: process.env.port,
+  port: process.env.PORT,
 };
 
 module.exports = env;
