@@ -3,8 +3,9 @@ const _ = require('lodash');
 const redis = require('redis');
 
 const client = redis.createClient({
-  host: '127.0.0.1',
-  port: 6379,
+  host: 'redis-11498.c278.us-east-1-4.ec2.cloud.redislabs.com:11498',
+  port: 10687,
+  password: '1234',
 });
 client.on('error', (err) => {
   // eslint-disable-next-line no-console
