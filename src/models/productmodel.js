@@ -20,8 +20,20 @@ const prdmodel = {
       }
     });
   }),
-  getlist: (search, field, sort, limit, offset) => new Promise((resolve, reject) => {
-    db.query(`select p.id, p.img, p.disc, p.prdname, p.price, c.category, p.size from product p left join category c on p.category_id=c.id where prdname like '%${search}%' order by ${field} ${sort} limit ${limit} offset ${offset}`, async (err, result) => {
+  getlist: (search, field, sort, limit, offset, format) => new Promise((resolve, reject) => {
+    // eslint-disable-next-line radix
+    console.log(format);
+    db.query(`select p.id, p.img, p.disc, p.prdname, p.price, c.category, p.size from product p left join category c on p.category_id=c.id where ${format} like '%${search}%' order by ${field} ${sort} limit ${limit} offset ${offset}`, async (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  }),
+  getCategory: (search, field, sort, limit, offset) => new Promise((resolve, reject) => {
+    // eslint-disable-next-line radix
+    db.query(`select p.id, p.img, p.disc, p.prdname, p.price, c.category, p.size from product p left join category c on p.category_id=c.id where c.category like '%${search}%' order by ${field} ${sort} limit ${limit} offset ${offset}`, async (err, result) => {
       if (err) {
         reject(err);
       } else {

@@ -19,6 +19,7 @@ const productctrl = {
   getlist: (req, res) => {
     try {
       const { query } = req;
+      const format = !query.format ? 'prdname' : query.format;
       const search = query.search === undefined ? '' : query.search;
       const field = query.field === undefined ? 'prdname' : query.field;
       const sort = query.sort === undefined ? 'asc' : query.sort;
@@ -29,13 +30,14 @@ const productctrl = {
         if (errRedis) {
           failed(res, 401, errRedis);
         } else if (!resultRedis) {
-          models.getlist(search, field, sort, limit, offset).then(async (result) => {
+          models.getlist(search, field, sort, limit, offset, format).then(async (result) => {
             const total = await models.gettotal();
             const allData = await models.getAll();
             const output = {
               data: result,
               search,
               limit,
+              format,
               page: query.page,
               totalpage: Math.ceil(total / limit),
             };
@@ -55,6 +57,7 @@ const productctrl = {
           const output = {
             data: sortBy,
             search,
+            format,
             page,
             totalPage: Math.ceil(response.length / limit),
           };
@@ -83,7 +86,7 @@ const productctrl = {
   insert: (req, res) => {
     try {
       const { body } = req;
-      const img = !req.file ? '' : req.file.filename;
+      const img = !req.file ? 'defaultprd.png' : req.file.filename;
       models.insert(body, img).then((result) => {
         client.del('product');
         success(res, result, 'Input To Product Data Success');
@@ -127,14 +130,20 @@ const productctrl = {
   // update data produk
   update: async (req, res) => {
     try {
-      if (req.file === '' || !req.file) {
-        failed(res, 411, 'Field Tidak Boleh Kosong');
+      const { id } = req.params;
+      const { body } = req;
+      const imgName = await models.getdetail(id);
+      const imgPath = `./src/img/${imgName[0].img}`;
+      const img = !req.file ? imgName[0].img : req.file.filename;
+      if (!req.file || imgName[0].img === 'defaultprd.png') {
+        models.update(img, body, id).then((result) => {
+          client.del('product');
+          success(res, result, 'Update Product Data Success');
+        })
+          .catch((err) => {
+            failed(res, 404, err);
+          });
       } else {
-        const { body } = req;
-        const { id } = req.params;
-        const img = req.file.filename;
-        const imgName = await models.getimg(id);
-        const imgPath = `./src/img/${imgName[0].img}`;
         fs.unlink(imgPath, ((errImg) => {
           if (errImg) {
             models.update(img, body, id).then((result) => {
